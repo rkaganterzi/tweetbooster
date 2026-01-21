@@ -9,9 +9,12 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/loading_overlay.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
+import '../../../core/providers/ad_provider.dart';
 import '../../../core/utils/extensions.dart';
 import '../providers/generator_provider.dart';
 import '../data/models/generated_post.dart';
+import '../data/models/generation_request.dart';
 import '../widgets/style_selector.dart';
 import '../widgets/engagement_target.dart';
 import '../widgets/generated_post_card.dart';
@@ -33,8 +36,11 @@ class _GeneratorScreenState extends ConsumerState<GeneratorScreen> {
     super.dispose();
   }
 
-  void _onGenerate() {
-    ref.read(generatorControllerProvider.notifier).generate();
+  void _onGenerate() async {
+    await ref.read(generatorControllerProvider.notifier).generate();
+
+    // Record action for interstitial ad
+    ref.read(adControllerProvider.notifier).recordAction();
   }
 
   void _onAnalyze(String content) {
@@ -70,9 +76,12 @@ class _GeneratorScreenState extends ConsumerState<GeneratorScreen> {
       body: LoadingOverlay(
         isLoading: state.isLoading,
         message: 'Oluşturuluyor...',
-        child: SingleChildScrollView(
-          padding: AppSpacing.screenPadding,
-          child: Column(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: AppSpacing.screenPadding,
+                child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Topic Input
@@ -155,6 +164,10 @@ class _GeneratorScreenState extends ConsumerState<GeneratorScreen> {
               AppSpacing.verticalGapXl,
             ],
           ),
+        ),
+            ),
+            const BottomBannerAd(),
+          ],
         ),
       ),
     );

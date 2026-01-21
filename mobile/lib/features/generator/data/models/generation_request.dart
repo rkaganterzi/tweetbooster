@@ -17,7 +17,7 @@ class GenerationRequest {
     return {
       'topic': topic,
       'style': style.value,
-      'targetEngagement': targetEngagement?.value,
+      'targetEngagement': targetEngagement?.value ?? 'all',
       'constraints': constraints.toJson(),
     };
   }
@@ -27,8 +27,9 @@ enum EngagementTarget {
   likes,
   replies,
   retweets,
-  bookmarks,
-  viral,
+  quotes,
+  shares,
+  all,
 }
 
 extension EngagementTargetExtension on EngagementTarget {
@@ -40,10 +41,12 @@ extension EngagementTargetExtension on EngagementTarget {
         return 'Yanıt';
       case EngagementTarget.retweets:
         return 'Retweet';
-      case EngagementTarget.bookmarks:
-        return 'Kaydet';
-      case EngagementTarget.viral:
-        return 'Viral';
+      case EngagementTarget.quotes:
+        return 'Alıntı';
+      case EngagementTarget.shares:
+        return 'Paylaşım';
+      case EngagementTarget.all:
+        return 'Hepsi';
     }
   }
 
@@ -55,10 +58,12 @@ extension EngagementTargetExtension on EngagementTarget {
         return 'Replies';
       case EngagementTarget.retweets:
         return 'Retweets';
-      case EngagementTarget.bookmarks:
-        return 'Bookmarks';
-      case EngagementTarget.viral:
-        return 'Viral';
+      case EngagementTarget.quotes:
+        return 'Quotes';
+      case EngagementTarget.shares:
+        return 'Shares';
+      case EngagementTarget.all:
+        return 'All';
     }
   }
 

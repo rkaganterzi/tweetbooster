@@ -25,6 +25,10 @@ class PostAnalysis {
   });
 
   factory PostAnalysis.fromJson(Map<String, dynamic> json) {
+    // Backend uses 'contentMetrics' and 'algorithmSignals'
+    final metricsData = json['contentMetrics'] ?? json['metrics'] ?? {};
+    final signalsData = json['algorithmSignals'] ?? json['signals'] ?? {};
+
     return PostAnalysis(
       content: json['content'] as String? ?? '',
       overallScore: (json['overallScore'] as num?)?.toDouble() ?? 0,
@@ -32,10 +36,10 @@ class PostAnalysis {
         json['engagementScores'] as Map<String, dynamic>? ?? {},
       ),
       metrics: ContentMetrics.fromJson(
-        json['metrics'] as Map<String, dynamic>? ?? {},
+        metricsData as Map<String, dynamic>,
       ),
       signals: AlgorithmSignals.fromJson(
-        json['signals'] as Map<String, dynamic>? ?? {},
+        signalsData as Map<String, dynamic>,
       ),
       suggestions: (json['suggestions'] as List<dynamic>?)
               ?.map((e) => Suggestion.fromJson(e as Map<String, dynamic>))
@@ -98,17 +102,24 @@ class AlgorithmSignals {
   });
 
   factory AlgorithmSignals.fromJson(Map<String, dynamic> json) {
+    // Backend returns positiveSignals/negativeSignals arrays
+    final positiveSignals = (json['positiveSignals'] as List<dynamic>?) ?? [];
+    final signalNames = positiveSignals
+        .map((s) => (s as Map<String, dynamic>)['name'] as String?)
+        .whereType<String>()
+        .toSet();
+
     return AlgorithmSignals(
-      hasQuestion: json['hasQuestion'] as bool? ?? false,
-      hasCallToAction: json['hasCallToAction'] as bool? ?? false,
-      hasHashtags: json['hasHashtags'] as bool? ?? false,
-      hasMentions: json['hasMentions'] as bool? ?? false,
-      hasMedia: json['hasMedia'] as bool? ?? false,
-      hasLinks: json['hasLinks'] as bool? ?? false,
-      hasEmojis: json['hasEmojis'] as bool? ?? false,
-      isOptimalLength: json['isOptimalLength'] as bool? ?? false,
-      hasControversialTone: json['hasControversialTone'] as bool? ?? false,
-      hasValueProposition: json['hasValueProposition'] as bool? ?? false,
+      hasQuestion: json['hasQuestion'] as bool? ?? signalNames.contains('has_question'),
+      hasCallToAction: json['hasCallToAction'] as bool? ?? signalNames.contains('has_cta'),
+      hasHashtags: json['hasHashtags'] as bool? ?? signalNames.contains('has_hashtags'),
+      hasMentions: json['hasMentions'] as bool? ?? signalNames.contains('has_mentions'),
+      hasMedia: json['hasMedia'] as bool? ?? signalNames.contains('has_media'),
+      hasLinks: json['hasLinks'] as bool? ?? signalNames.contains('has_links'),
+      hasEmojis: json['hasEmojis'] as bool? ?? signalNames.contains('has_emojis'),
+      isOptimalLength: json['isOptimalLength'] as bool? ?? signalNames.contains('optimal_length'),
+      hasControversialTone: json['hasControversialTone'] as bool? ?? signalNames.contains('controversial_tone'),
+      hasValueProposition: json['hasValueProposition'] as bool? ?? signalNames.contains('value_proposition'),
     );
   }
 

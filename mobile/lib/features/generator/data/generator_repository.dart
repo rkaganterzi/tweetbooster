@@ -14,7 +14,10 @@ class GeneratorRepository {
       data: request.toJson(),
     );
 
-    return GeneratedPost.fromJson(response.data as Map<String, dynamic>);
+    final responseData = response.data as Map<String, dynamic>;
+    final data = responseData['data'] as Map<String, dynamic>;
+    data['style'] = request.style.value; // Add style as string from request
+    return GeneratedPost.fromJson(data);
   }
 
   Future<List<GeneratedPost>> generateMultiple(

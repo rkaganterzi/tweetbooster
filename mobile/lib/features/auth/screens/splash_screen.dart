@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
+import '../../../core/router/app_router.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -38,6 +40,13 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _controller.forward();
+
+    // Navigate to login after splash animation
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      if (mounted) {
+        context.go(AppRoutes.login);
+      }
+    });
   }
 
   @override

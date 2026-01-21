@@ -201,7 +201,7 @@ class _SuggestionItemState extends State<_SuggestionItem> {
                       ),
                     ),
                   ],
-                  if (widget.suggestion.impactScore != null) ...[
+                  if (widget.suggestion.impactScore != null && widget.suggestion.impactScore! > 0) ...[
                     AppSpacing.verticalGapMd,
                     Row(
                       children: [
@@ -212,7 +212,7 @@ class _SuggestionItemState extends State<_SuggestionItem> {
                         ),
                         AppSpacing.horizontalGapXs,
                         Text(
-                          'Tahmini etki: +${widget.suggestion.impactScore!.toInt()}%',
+                          'Tahmini etki: +${(widget.suggestion.impactScore! * 100).toInt()}%',
                           style: AppTypography.caption.copyWith(
                             color: AppColors.success,
                             fontWeight: FontWeight.w500,

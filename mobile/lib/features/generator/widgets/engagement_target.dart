@@ -116,10 +116,12 @@ class _TargetChip extends StatelessWidget {
         return AppColors.info;
       case EngagementTarget.retweets:
         return AppColors.success;
-      case EngagementTarget.bookmarks:
+      case EngagementTarget.quotes:
         return AppColors.warning;
-      case EngagementTarget.viral:
+      case EngagementTarget.shares:
         return AppColors.primary;
+      case EngagementTarget.all:
+        return AppColors.textSecondary;
     }
   }
 
@@ -131,10 +133,12 @@ class _TargetChip extends StatelessWidget {
         return Icons.chat_bubble_outline;
       case EngagementTarget.retweets:
         return Icons.repeat;
-      case EngagementTarget.bookmarks:
-        return Icons.bookmark_outline;
-      case EngagementTarget.viral:
-        return Icons.trending_up;
+      case EngagementTarget.quotes:
+        return Icons.format_quote;
+      case EngagementTarget.shares:
+        return Icons.share_outlined;
+      case EngagementTarget.all:
+        return Icons.all_inclusive;
     }
   }
 }

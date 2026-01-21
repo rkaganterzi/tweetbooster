@@ -2,7 +2,7 @@ class ApiConfig {
   ApiConfig._();
 
   // Base URL for the API (Render deployment)
-  static const String baseUrl = 'https://tweetboost-api.onrender.com';
+  static const String baseUrl = 'https://tweetbooster-api.onrender.com';
 
   // Timeouts
   static const Duration connectTimeout = Duration(seconds: 30);
@@ -16,6 +16,17 @@ class ApiConfig {
   static const String templatesEndpoint = '/api/templates';
   static const String timingEndpoint = '/api/timing';
   static const String timingNowEndpoint = '/api/timing/now';
+
+  // Competitor Analysis Endpoints
+  static const String competitorAnalyzeEndpoint = '/api/competitor/analyze';
+  static const String competitorHistoryEndpoint = '/api/competitor/history';
+  static String competitorByIdEndpoint(String id) => '/api/competitor/$id';
+
+  // Performance Tracking Endpoints
+  static const String performanceExtractEndpoint = '/api/performance/extract';
+  static const String performanceHistoryEndpoint = '/api/performance/history';
+  static const String performanceTrendsEndpoint = '/api/performance/trends';
+  static String performanceByIdEndpoint(String id) => '/api/performance/$id';
 
   // Headers
   static Map<String, String> get defaultHeaders => {

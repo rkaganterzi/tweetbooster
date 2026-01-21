@@ -9,8 +9,35 @@ class TimingRepository {
 
   Future<TimingAnalysis> getCurrentTiming() async {
     try {
-      final response = await _apiService.get(ApiConfig.timingNowEndpoint);
-      return TimingAnalysis.fromJson(response.data as Map<String, dynamic>);
+      // Get current timing
+      final nowResponse = await _apiService.get(ApiConfig.timingNowEndpoint);
+      final nowData = (nowResponse.data as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+
+      // Get full timing data for best times
+      final timingResponse = await _apiService.get(ApiConfig.timingEndpoint);
+      final timingData = (timingResponse.data as Map<String, dynamic>)['data'] as Map<String, dynamic>;
+
+      // Parse optimal hours
+      final optimalHours = (timingData['optimalHours'] as List<dynamic>?) ?? [];
+      final topTimes = optimalHours.take(5).map((h) {
+        final hour = h as Map<String, dynamic>;
+        return TimingRecommendation(
+          hour: hour['hour'] as int? ?? 0,
+          dayOfWeek: DateTime.now().weekday - 1,
+          score: (hour['score'] as num?)?.toDouble() ?? 0,
+          label: hour['audienceActivity'] as String? ?? '',
+          description: 'Engagement: ${hour['engagementMultiplier']}x',
+        );
+      }).toList();
+
+      return TimingAnalysis(
+        currentScore: (nowData['currentScore'] as num?)?.toDouble() ?? 0,
+        isGoodTime: nowData['isOptimalTime'] as bool? ?? false,
+        recommendation: nowData['recommendation'] as String? ?? '',
+        bestTime: topTimes.isNotEmpty ? topTimes.first : null,
+        topTimes: topTimes,
+        heatmapData: TimingAnalysis.generateMockHeatmap(),
+      );
     } catch (e) {
       // Return mock data if API fails
       return _getMockTimingAnalysis();
@@ -20,10 +47,32 @@ class TimingRepository {
   Future<List<TimingRecommendation>> getBestTimes() async {
     try {
       final response = await _apiService.get(ApiConfig.timingEndpoint);
-      final list = response.data as List<dynamic>;
-      return list
-          .map((e) => TimingRecommendation.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final responseData = response.data as Map<String, dynamic>;
+      final data = responseData['data'] as Map<String, dynamic>;
+
+      final optimalHours = (data['optimalHours'] as List<dynamic>?) ?? [];
+      final dayOfWeek = (data['dayOfWeek'] as List<dynamic>?) ?? [];
+
+      // Combine optimal hours with day data
+      List<TimingRecommendation> recommendations = [];
+
+      for (var i = 0; i < dayOfWeek.length && i < 7; i++) {
+        final day = dayOfWeek[i] as Map<String, dynamic>;
+        final bestHours = (day['bestHours'] as List<dynamic>?) ?? [];
+        if (bestHours.isNotEmpty) {
+          recommendations.add(TimingRecommendation(
+            hour: bestHours.first as int,
+            dayOfWeek: i,
+            score: (day['overallScore'] as num?)?.toDouble() ?? 0,
+            label: day['day'] as String? ?? '',
+            description: day['reasoning'] as String? ?? '',
+          ));
+        }
+      }
+
+      // Sort by score descending
+      recommendations.sort((a, b) => b.score.compareTo(a.score));
+      return recommendations.take(5).toList();
     } catch (e) {
       return _getMockBestTimes();
     }

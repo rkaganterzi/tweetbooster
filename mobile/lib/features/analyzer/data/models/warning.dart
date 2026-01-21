@@ -34,14 +34,37 @@ class Warning {
   });
 
   factory Warning.fromJson(Map<String, dynamic> json) {
+    // Backend returns: type, severity, message, scoreImpact
+    final typeStr = json['type'] as String? ?? '';
     return Warning(
-      id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      description: json['description'] as String? ?? '',
-      type: _parseType(json['type'] as String?),
+      id: json['id'] as String? ?? typeStr,
+      title: json['title'] as String? ?? _getWarningTitle(typeStr),
+      description: json['description'] as String? ?? json['message'] as String? ?? '',
+      type: _parseType(typeStr),
       severity: _parseSeverity(json['severity'] as String?),
       recommendation: json['recommendation'] as String?,
     );
+  }
+
+  static String _getWarningTitle(String type) {
+    switch (type) {
+      case 'too_short':
+        return 'Çok Kısa';
+      case 'too_long':
+        return 'Çok Uzun';
+      case 'too_many_hashtags':
+        return 'Fazla Hashtag';
+      case 'too_many_mentions':
+        return 'Fazla Mention';
+      case 'all_caps':
+        return 'Tümü Büyük Harf';
+      case 'link_only':
+        return 'Sadece Link';
+      case 'spam_pattern':
+        return 'Spam Riski';
+      default:
+        return 'Uyarı';
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -58,22 +81,35 @@ class Warning {
   static WarningType _parseType(String? type) {
     switch (type) {
       case 'characterLimit':
+      case 'too_long':
         return WarningType.characterLimit;
       case 'hashtagOveruse':
+      case 'too_many_hashtags':
         return WarningType.hashtagOveruse;
       case 'mentionOveruse':
+      case 'too_many_mentions':
         return WarningType.mentionOveruse;
       case 'emojiOveruse':
+      case 'too_many_emojis':
         return WarningType.emojiOveruse;
       case 'linkOveruse':
+      case 'too_many_links':
+      case 'link_only':
         return WarningType.linkOveruse;
       case 'tooShort':
+      case 'too_short':
+      case 'suboptimal_length':
         return WarningType.tooShort;
       case 'noEngagement':
+      case 'low_engagement_pattern':
         return WarningType.noEngagement;
       case 'spammy':
+      case 'spam_pattern':
+      case 'follow_for_follow':
         return WarningType.spammy;
       case 'sensitive':
+      case 'all_caps':
+      case 'negative_sentiment':
         return WarningType.sensitive;
       default:
         return WarningType.noEngagement;
@@ -83,10 +119,13 @@ class Warning {
   static WarningSeverity _parseSeverity(String? severity) {
     switch (severity) {
       case 'critical':
+      case 'high':
         return WarningSeverity.critical;
       case 'warning':
+      case 'medium':
         return WarningSeverity.warning;
       case 'info':
+      case 'low':
         return WarningSeverity.info;
       default:
         return WarningSeverity.warning;

@@ -83,6 +83,10 @@ abstract class AppLocalizations {
   String get notifications;
   String get about;
   String get version;
+  String get competitorTab;
+  String get performanceTab;
+  String get competitorAnalysis;
+  String get performanceTracking;
 }
 
 class _AppLocalizationsDelegate
@@ -220,6 +224,14 @@ class AppLocalizationsTr extends AppLocalizations {
   String get about => 'Hakkında';
   @override
   String get version => 'Versiyon';
+  @override
+  String get competitorTab => 'Rakip';
+  @override
+  String get performanceTab => 'Performans';
+  @override
+  String get competitorAnalysis => 'Rakip Analizi';
+  @override
+  String get performanceTracking => 'Performans Takibi';
 }
 
 class AppLocalizationsEn extends AppLocalizations {
@@ -330,4 +342,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
   @override
   String get version => 'Version';
+  @override
+  String get competitorTab => 'Competitor';
+  @override
+  String get performanceTab => 'Performance';
+  @override
+  String get competitorAnalysis => 'Competitor Analysis';
+  @override
+  String get performanceTracking => 'Performance Tracking';
 }

@@ -9,6 +9,10 @@ import '../../features/generator/screens/generator_screen.dart';
 import '../../features/templates/screens/templates_screen.dart';
 import '../../features/threads/screens/threads_screen.dart';
 import '../../features/timing/screens/timing_screen.dart';
+import '../../features/competitor/screens/competitor_screen.dart';
+import '../../features/competitor/screens/competitor_history_screen.dart';
+import '../../features/performance/screens/performance_screen.dart';
+import '../../features/performance/screens/performance_history_screen.dart';
 import '../../features/settings/screens/settings_screen.dart';
 import '../widgets/bottom_nav.dart';
 
@@ -21,6 +25,10 @@ class AppRoutes {
   static const templates = '/templates';
   static const threads = '/threads';
   static const timing = '/timing';
+  static const competitor = '/competitor';
+  static const competitorHistory = '/competitor/history';
+  static const performance = '/performance';
+  static const performanceHistory = '/performance/history';
   static const settings = '/settings';
 }
 
@@ -45,17 +53,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       return authState.when(
         data: (user) {
           if (user == null) {
-            // Not logged in
+            // Not logged in - stay on login or go to login
             if (isLoggingIn || isSplash) return null;
             return AppRoutes.login;
           } else {
-            // Logged in
+            // Logged in - go to home
             if (isLoggingIn || isSplash) return AppRoutes.home;
             return null;
           }
         },
-        loading: () => isSplash ? null : AppRoutes.splash,
-        error: (_, __) => AppRoutes.login,
+        loading: () => null, // Stay on current route while loading
+        error: (_, __) => null, // Stay on current route on error
       );
     },
     routes: [
@@ -108,7 +116,27 @@ final routerProvider = Provider<GoRouter>((ref) {
               child: TimingScreen(),
             ),
           ),
+          GoRoute(
+            path: AppRoutes.competitor,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: CompetitorScreen(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.performance,
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: PerformanceScreen(),
+            ),
+          ),
         ],
+      ),
+      GoRoute(
+        path: AppRoutes.competitorHistory,
+        builder: (context, state) => const CompetitorHistoryScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.performanceHistory,
+        builder: (context, state) => const PerformanceHistoryScreen(),
       ),
       GoRoute(
         path: AppRoutes.settings,
@@ -139,6 +167,8 @@ class _MainShellState extends State<MainShell> {
     AppRoutes.templates,
     AppRoutes.threads,
     AppRoutes.timing,
+    AppRoutes.competitor,
+    AppRoutes.performance,
   ];
 
   @override
@@ -162,6 +192,8 @@ class _MainShellState extends State<MainShell> {
     if (location == AppRoutes.templates) return 2;
     if (location == AppRoutes.threads) return 3;
     if (location == AppRoutes.timing) return 4;
+    if (location == AppRoutes.competitor) return 5;
+    if (location == AppRoutes.performance) return 6;
 
     return 0;
   }

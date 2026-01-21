@@ -7,6 +7,8 @@ import '../../../core/constants/app_typography.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/loading_overlay.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
+import '../../../core/providers/ad_provider.dart';
 import '../../../core/utils/extensions.dart';
 import '../providers/analyzer_provider.dart';
 import '../widgets/post_input.dart';
@@ -34,14 +36,17 @@ class _AnalyzerScreenState extends ConsumerState<AnalyzerScreen> {
     super.dispose();
   }
 
-  void _onAnalyze() {
+  void _onAnalyze() async {
     final content = _textController.text.trim();
     if (content.isEmpty) {
       context.showSnackBar('Lütfen bir post yazın', isError: true);
       return;
     }
 
-    ref.read(analyzerControllerProvider.notifier).analyzePost(content);
+    await ref.read(analyzerControllerProvider.notifier).analyzePost(content);
+
+    // Record action for interstitial ad
+    ref.read(adControllerProvider.notifier).recordAction();
   }
 
   void _onClear() {
@@ -76,7 +81,10 @@ class _AnalyzerScreenState extends ConsumerState<AnalyzerScreen> {
       body: LoadingOverlay(
         isLoading: analyzerState.isLoading,
         message: 'Analiz ediliyor...',
-        child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
           controller: _scrollController,
           padding: AppSpacing.screenPadding,
           child: Column(
@@ -152,6 +160,10 @@ class _AnalyzerScreenState extends ConsumerState<AnalyzerScreen> {
               ],
             ],
           ),
+        ),
+            ),
+            const BottomBannerAd(),
+          ],
         ),
       ),
     );

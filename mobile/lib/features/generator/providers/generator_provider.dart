@@ -10,7 +10,7 @@ final generatorRepositoryProvider = Provider<GeneratorRepository>((ref) {
   return GeneratorRepository(apiService);
 });
 
-// Generator state
+// Generator state - uses GenerationConstraints from generation_request.dart
 class GeneratorState {
   final String topic;
   final PostStyle style;
@@ -21,7 +21,7 @@ class GeneratorState {
   final bool isLoading;
   final String? error;
 
-  const GeneratorState({
+  GeneratorState({
     this.topic = '',
     this.style = PostStyle.informative,
     this.targetEngagement,
@@ -30,7 +30,7 @@ class GeneratorState {
     this.history = const [],
     this.isLoading = false,
     this.error,
-  }) : constraints = constraints ?? const GenerationConstraints();
+  }) : constraints = constraints ?? GenerationConstraints();
 
   GeneratorState copyWith({
     String? topic,
@@ -59,42 +59,10 @@ class GeneratorState {
   }
 }
 
-class GenerationConstraints {
-  final bool includeHashtags;
-  final bool includeEmojis;
-  final String? tone;
-
-  const GenerationConstraints({
-    this.includeHashtags = true,
-    this.includeEmojis = true,
-    this.tone,
-  });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'includeHashtags': includeHashtags,
-      'includeEmojis': includeEmojis,
-      if (tone != null) 'tone': tone,
-    };
-  }
-
-  GenerationConstraints copyWith({
-    bool? includeHashtags,
-    bool? includeEmojis,
-    String? tone,
-  }) {
-    return GenerationConstraints(
-      includeHashtags: includeHashtags ?? this.includeHashtags,
-      includeEmojis: includeEmojis ?? this.includeEmojis,
-      tone: tone ?? this.tone,
-    );
-  }
-}
-
 class GeneratorController extends StateNotifier<GeneratorState> {
   final GeneratorRepository _repository;
 
-  GeneratorController(this._repository) : super(const GeneratorState());
+  GeneratorController(this._repository) : super(GeneratorState());
 
   void setTopic(String topic) {
     state = state.copyWith(topic: topic);
@@ -144,7 +112,7 @@ class GeneratorController extends StateNotifier<GeneratorState> {
         topic: state.topic,
         style: state.style,
         targetEngagement: state.targetEngagement,
-        constraints: state.constraints as dynamic,
+        constraints: state.constraints,
       );
 
       final post = await _repository.generatePost(request);
@@ -175,7 +143,7 @@ class GeneratorController extends StateNotifier<GeneratorState> {
   }
 
   void reset() {
-    state = const GeneratorState();
+    state = GeneratorState();
   }
 }
 

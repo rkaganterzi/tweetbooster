@@ -7,6 +7,8 @@ import analyzeRouter from './routes/analyze.js';
 import generateRouter from './routes/generate.js';
 import templatesRouter from './routes/templates.js';
 import timingRouter from './routes/timing.js';
+import competitorRouter from './routes/competitor.js';
+import performanceRouter from './routes/performance.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -23,6 +25,8 @@ app.use('/api/analyze', analyzeRouter);
 app.use('/api/generate', generateRouter);
 app.use('/api/templates', templatesRouter);
 app.use('/api/timing', timingRouter);
+app.use('/api/competitor', competitorRouter);
+app.use('/api/performance', performanceRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

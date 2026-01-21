@@ -170,7 +170,13 @@ class _SecondaryButton extends StatelessWidget {
         children: [
           Icon(icon, size: 20, color: AppColors.textPrimary),
           AppSpacing.horizontalGapSm,
-          Text(text, style: AppTypography.button),
+          Flexible(
+            child: Text(
+              text,
+              style: AppTypography.button,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       );
     }

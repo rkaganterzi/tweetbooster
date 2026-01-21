@@ -4,7 +4,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   FirebaseAuth? _firebaseAuth;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    serverClientId: '917797506730-0p9jt60n9h3a8a7tvmurq5u28er023np.apps.googleusercontent.com',
+  );
   bool _isFirebaseAvailable = false;
 
   AuthService() {

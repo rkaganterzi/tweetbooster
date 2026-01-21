@@ -13,7 +13,10 @@ class AnalyzerRepository {
       data: {'content': content},
     );
 
-    return PostAnalysis.fromJson(response.data as Map<String, dynamic>);
+    final responseData = response.data as Map<String, dynamic>;
+    final data = responseData['data'] as Map<String, dynamic>;
+    data['content'] = content; // API doesn't return content, add it
+    return PostAnalysis.fromJson(data);
   }
 
   Future<List<PostAnalysis>> getHistory() async {

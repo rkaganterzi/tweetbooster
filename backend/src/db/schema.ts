@@ -1,4 +1,4 @@
-import { pgTable, text, real, timestamp, jsonb } from 'drizzle-orm/pg-core';
+import { pgTable, text, real, integer, timestamp, jsonb } from 'drizzle-orm/pg-core';
 
 export const posts = pgTable('posts', {
   id: text('id').primaryKey(),
@@ -40,9 +40,43 @@ export const templates = pgTable('templates', {
     .defaultNow(),
 });
 
+// Competitor Analysis table
+export const competitorAnalysis = pgTable('competitor_analysis', {
+  id: text('id').primaryKey(),
+  competitorContent: text('competitor_content').notNull(),
+  sourceUrl: text('source_url'),
+  notes: text('notes'),
+  analysis: jsonb('analysis').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// Performance Tracking table
+export const performanceTracking = pgTable('performance_tracking', {
+  id: text('id').primaryKey(),
+  originalAnalysisId: text('original_analysis_id'),
+  predictedScore: real('predicted_score').notNull(),
+  actualLikes: integer('actual_likes'),
+  actualRetweets: integer('actual_retweets'),
+  actualReplies: integer('actual_replies'),
+  actualQuotes: integer('actual_quotes'),
+  actualImpressions: integer('actual_impressions'),
+  actualBookmarks: integer('actual_bookmarks'),
+  postContent: text('post_content'),
+  accuracyScore: real('accuracy_score'),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
 export type AnalysisHistoryRecord = typeof analysisHistory.$inferSelect;
 export type NewAnalysisHistory = typeof analysisHistory.$inferInsert;
 export type Template = typeof templates.$inferSelect;
 export type NewTemplate = typeof templates.$inferInsert;
+export type CompetitorAnalysisRecord = typeof competitorAnalysis.$inferSelect;
+export type NewCompetitorAnalysis = typeof competitorAnalysis.$inferInsert;
+export type PerformanceTrackingRecord = typeof performanceTracking.$inferSelect;
+export type NewPerformanceTracking = typeof performanceTracking.$inferInsert;

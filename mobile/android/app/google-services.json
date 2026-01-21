@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "917797506730",
+    "project_id": "tweetbooster-8bede",
+    "storage_bucket": "tweetbooster-8bede.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917797506730:android:6b8861bebe54c08b254ad3",
+        "android_client_info": {
+          "package_name": "com.rkt.tweetboost"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "917797506730-0p9jt60n9h3a8a7tvmurq5u28er023np.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnQx7tWkmQSNQgcWAtl0gdYP6Po7nT3DM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917797506730-0p9jt60n9h3a8a7tvmurq5u28er023np.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

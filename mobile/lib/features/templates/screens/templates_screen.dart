@@ -6,6 +6,7 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/widgets/loading_overlay.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 import '../../../core/utils/extensions.dart';
 import '../providers/templates_provider.dart';
 import '../data/models/post_template.dart';
@@ -142,6 +143,9 @@ class TemplatesScreen extends ConsumerWidget {
               ),
             ),
           ),
+
+          // Banner Ad
+          const BottomBannerAd(),
         ],
       ),
     );
