@@ -2,8 +2,15 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
-import { db, schema } from '../db/index.js';
+import { db, schema, isDbAvailable } from '../db/index.js';
 import { createError } from '../middleware/error.js';
+
+function requireDb() {
+  if (!db || !isDbAvailable) {
+    throw createError('Database not configured', 503, 'DB_UNAVAILABLE');
+  }
+  return db;
+}
 import type { PostTemplate, TemplateCategory, TemplatePlaceholder } from '@postmaker/shared';
 
 const router = Router();
@@ -116,7 +123,8 @@ const DEFAULT_TEMPLATES: Omit<PostTemplate, 'id'>[] = [
 
 router.get('/', async (_req, res, next) => {
   try {
-    const templates = await db.query.templates.findMany({
+    const database = requireDb();
+    const templates = await database.query.templates.findMany({
       orderBy: (records, { asc }) => [asc(records.name)],
     });
 
@@ -151,10 +159,11 @@ router.get('/defaults', (_req, res) => {
 
 router.post('/', async (req, res, next) => {
   try {
+    const database = requireDb();
     const data = createTemplateSchema.parse(req.body);
     const id = randomUUID();
 
-    await db.insert(schema.templates).values({
+    await database.insert(schema.templates).values({
       id,
       name: data.name,
       description: data.description,
@@ -189,7 +198,8 @@ router.get('/:id', async (req, res, next) => {
       return;
     }
 
-    const template = await db.query.templates.findFirst({
+    const database = requireDb();
+    const template = await database.query.templates.findFirst({
       where: eq(schema.templates.id, id),
     });
 
@@ -219,13 +229,14 @@ router.get('/:id', async (req, res, next) => {
 
 router.delete('/:id', async (req, res, next) => {
   try {
+    const database = requireDb();
     const { id } = req.params;
 
     if (id.startsWith('default-')) {
       throw createError('Cannot delete default templates', 400, 'INVALID_OPERATION');
     }
 
-    const existing = await db.query.templates.findFirst({
+    const existing = await database.query.templates.findFirst({
       where: eq(schema.templates.id, id),
     });
 
@@ -233,7 +244,7 @@ router.delete('/:id', async (req, res, next) => {
       throw createError('Template not found', 404, 'NOT_FOUND');
     }
 
-    await db.delete(schema.templates).where(eq(schema.templates.id, id));
+    await database.delete(schema.templates).where(eq(schema.templates.id, id));
 
     res.json({
       success: true,
