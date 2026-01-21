@@ -1,0 +1,21 @@
+# Render Blueprint
+# Deploy: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: tweetboost-api
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        sync: false  # Set manually or connect to Render PostgreSQL
+      - key: ANTHROPIC_API_KEY
+        sync: false  # Required for AI generation - set manually
+    healthCheckPath: /health
+    autoDeploy: true
