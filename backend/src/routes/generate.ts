@@ -151,8 +151,8 @@ router.post('/', async (req, res, next) => {
           threadParts: threadParts ?? null,
           score: analysis.overallScore,
         });
-      } catch (dbError) {
-        console.warn('[Generate] Failed to save to database:', dbError);
+      } catch {
+        // Continue without saving
       }
     }
 

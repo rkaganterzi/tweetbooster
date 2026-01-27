@@ -47,7 +47,6 @@ export async function analyzeScreenshot(
 ): Promise<ExtractedMetrics> {
   // Return mock data if Claude is not configured
   if (!isClaudeConfigured()) {
-    console.warn('[ScreenshotAnalyzer] Claude not configured, returning mock data');
     return {
       likes: Math.floor(Math.random() * 100) + 10,
       retweets: Math.floor(Math.random() * 30) + 5,
@@ -115,8 +114,6 @@ export async function analyzeScreenshot(
       totalEngagement,
     };
   } catch (error) {
-    console.error('[ScreenshotAnalyzer] Failed to analyze screenshot:', error);
-
     // Return empty metrics on error
     return {
       likes: null,

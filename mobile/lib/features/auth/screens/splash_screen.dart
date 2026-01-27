@@ -41,10 +41,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to login after splash animation
+    // Navigate to home after splash animation
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (mounted) {
-        context.go(AppRoutes.login);
+        context.go(AppRoutes.home);
       }
     });
   }
@@ -72,16 +72,24 @@ class _SplashScreenState extends State<SplashScreen>
                   children: [
                     // Logo
                     Container(
-                      width: 100,
-                      height: 100,
+                      width: 120,
+                      height: 120,
                       decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
                         borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(0.3),
+                            blurRadius: 24,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
                       ),
-                      child: const Icon(
-                        Icons.rocket_launch_rounded,
-                        size: 56,
-                        color: Colors.white,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.asset(
+                          'assets/images/logo.png',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),

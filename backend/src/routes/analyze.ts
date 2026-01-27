@@ -30,8 +30,7 @@ router.post('/', async (req, res, next) => {
           postContent: content,
           analysis: JSON.stringify(analysis),
         });
-      } catch (dbError) {
-        console.warn('[Analyze] Failed to save history:', dbError);
+      } catch {
         // Continue without saving - analysis still works
       }
     }

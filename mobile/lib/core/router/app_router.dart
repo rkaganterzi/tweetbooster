@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/auth/screens/splash_screen.dart';
-import '../../features/auth/screens/login_screen.dart';
-import '../../features/auth/providers/auth_provider.dart';
 import '../../features/analyzer/screens/analyzer_screen.dart';
 import '../../features/generator/screens/generator_screen.dart';
 import '../../features/templates/screens/templates_screen.dart';
@@ -18,7 +16,6 @@ import '../widgets/bottom_nav.dart';
 
 class AppRoutes {
   static const splash = '/splash';
-  static const login = '/login';
   static const home = '/';
   static const analyzer = '/analyzer';
   static const generator = '/generator';
@@ -33,47 +30,13 @@ class AppRoutes {
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authService = ref.watch(authServiceProvider);
-  final authState = ref.watch(authStateProvider);
-  final isFirebaseAvailable = authService.isFirebaseAvailable;
-
   return GoRouter(
     initialLocation: AppRoutes.splash,
-    debugLogDiagnostics: true,
-    redirect: (context, state) {
-      final isLoggingIn = state.matchedLocation == AppRoutes.login;
-      final isSplash = state.matchedLocation == AppRoutes.splash;
-
-      // If Firebase is not available, skip auth and go directly to home
-      if (!isFirebaseAvailable) {
-        if (isSplash || isLoggingIn) return AppRoutes.home;
-        return null;
-      }
-
-      return authState.when(
-        data: (user) {
-          if (user == null) {
-            // Not logged in - stay on login or go to login
-            if (isLoggingIn || isSplash) return null;
-            return AppRoutes.login;
-          } else {
-            // Logged in - go to home
-            if (isLoggingIn || isSplash) return AppRoutes.home;
-            return null;
-          }
-        },
-        loading: () => null, // Stay on current route while loading
-        error: (_, __) => null, // Stay on current route on error
-      );
-    },
+    debugLogDiagnostics: false,
     routes: [
       GoRoute(
         path: AppRoutes.splash,
         builder: (context, state) => const SplashScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.login,
-        builder: (context, state) => const LoginScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) {

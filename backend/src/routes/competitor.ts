@@ -35,8 +35,7 @@ router.post('/analyze', async (req, res, next) => {
           notes: notes || null,
           analysis: JSON.stringify(analysis),
         });
-      } catch (dbError) {
-        console.warn('[Competitor] Failed to save analysis:', dbError);
+      } catch {
         savedId = null;
       }
     }

@@ -72,7 +72,7 @@ class AnalyzerController extends StateNotifier<AnalyzerState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: e is ApiException ? e.message : 'Analiz yapılırken bir hata oluştu.',
       );
     }
   }

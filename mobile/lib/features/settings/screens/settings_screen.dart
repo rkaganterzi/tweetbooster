@@ -6,7 +6,6 @@ import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/utils/extensions.dart';
-import '../../auth/providers/auth_provider.dart';
 import '../providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -14,7 +13,6 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentUser = ref.watch(currentUserProvider);
     final locale = ref.watch(localeProvider);
     final notificationsEnabled = ref.watch(notificationsEnabledProvider);
     final appVersion = ref.watch(appVersionProvider);
@@ -34,12 +32,6 @@ class SettingsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile section
-            if (currentUser != null) ...[
-              _ProfileSection(user: currentUser),
-              AppSpacing.verticalGapLg,
-            ],
-
             // Language
             Text(
               l10n.language,
@@ -106,91 +98,9 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
 
-            AppSpacing.verticalGapLg,
-
-            // Logout
-            if (currentUser != null)
-              _LogoutButton(
-                onLogout: () async {
-                  await ref.read(authControllerProvider.notifier).signOut();
-                  if (context.mounted) {
-                    context.go('/login');
-                  }
-                },
-              ),
-
             AppSpacing.verticalGapXl,
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _ProfileSection extends StatelessWidget {
-  final dynamic user;
-
-  const _ProfileSection({required this.user});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppCard(
-      child: Row(
-        children: [
-          // Avatar
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.15),
-              shape: BoxShape.circle,
-            ),
-            child: user.photoUrl != null
-                ? ClipOval(
-                    child: Image.network(
-                      user.photoUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Center(
-                        child: Text(
-                          user.initials,
-                          style: AppTypography.h3.copyWith(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Center(
-                    child: Text(
-                      user.initials,
-                      style: AppTypography.h3.copyWith(
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-          ),
-          AppSpacing.horizontalGapMd,
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.displayName ?? 'Kullanıcı',
-                  style: AppTypography.body.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (user.email != null) ...[
-                  AppSpacing.verticalGapXs,
-                  Text(
-                    user.email!,
-                    style: AppTypography.caption,
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -340,62 +250,6 @@ class _SettingsRow extends StatelessWidget {
                 color: AppColors.textSecondary,
               ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LogoutButton extends StatelessWidget {
-  final VoidCallback onLogout;
-
-  const _LogoutButton({required this.onLogout});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: AppColors.surface,
-              title: Text(
-                'Çıkış Yap',
-                style: AppTypography.h3,
-              ),
-              content: Text(
-                'Hesabınızdan çıkış yapmak istediğinize emin misiniz?',
-                style: AppTypography.body,
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('İptal'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    onLogout();
-                  },
-                  child: Text(
-                    'Çıkış Yap',
-                    style: TextStyle(color: AppColors.error),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-        icon: Icon(Icons.logout, color: AppColors.error),
-        label: Text(
-          context.l10n.logout,
-          style: TextStyle(color: AppColors.error),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: AppColors.error.withOpacity(0.5)),
-          padding: const EdgeInsets.symmetric(vertical: 14),
         ),
       ),
     );

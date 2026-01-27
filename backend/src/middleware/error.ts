@@ -19,7 +19,9 @@ export const errorHandler: ErrorRequestHandler = (
   res: Response,
   _next: NextFunction
 ): void => {
-  console.error('[Error]', err);
+  if (process.env.NODE_ENV !== 'production') {
+    console.error('[Error]', err);
+  }
 
   if (err instanceof ZodError) {
     res.status(400).json({

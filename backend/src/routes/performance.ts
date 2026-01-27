@@ -9,7 +9,7 @@ const router = Router();
 
 // Request schemas
 const extractMetricsSchema = z.object({
-  imageBase64: z.string().min(1, 'Image data is required'),
+  imageBase64: z.string().min(1, 'Image data is required').max(10 * 1024 * 1024, 'Image too large (max 10MB)'),
   mediaType: z.enum(['image/png', 'image/jpeg', 'image/webp']).default('image/png'),
   originalAnalysisId: z.string().optional(),
   predictedScore: z.number().min(0).max(100).optional(),
@@ -60,8 +60,7 @@ router.post('/extract', async (req, res, next) => {
           postContent: postContent || null,
           accuracyScore,
         });
-      } catch (dbError) {
-        console.warn('[Performance] Failed to save metrics:', dbError);
+      } catch {
         savedId = null;
       }
     }

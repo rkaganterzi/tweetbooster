@@ -13,11 +13,15 @@ class ApiService {
       headers: ApiConfig.defaultHeaders,
     ));
 
-    _dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      error: true,
-    ));
+    // Only log in debug mode
+    assert(() {
+      _dio.interceptors.add(LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        error: true,
+      ));
+      return true;
+    }());
 
     _dio.interceptors.add(InterceptorsWrapper(
       onError: (error, handler) {
