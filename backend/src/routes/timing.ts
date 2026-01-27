@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import {
   OPTIMAL_HOURS,
@@ -75,7 +75,7 @@ function getAudienceActivity(hour: number, dayIndex: number): 'low' | 'medium' |
   return 'medium';
 }
 
-router.get('/', (req, res, next) => {
+router.get('/', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { timezone } = timingQuerySchema.parse(req.query);
 
@@ -126,7 +126,7 @@ router.get('/', (req, res, next) => {
   }
 });
 
-router.get('/now', (req, res, next) => {
+router.get('/now', (req: Request, res: Response, next: NextFunction) => {
   try {
     const { timezone } = timingQuerySchema.parse(req.query);
 

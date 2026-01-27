@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { eq, desc } from 'drizzle-orm';
@@ -26,7 +26,7 @@ const updateMetricsSchema = z.object({
 });
 
 // POST /api/performance/extract - Extract metrics from screenshot
-router.post('/extract', async (req, res, next) => {
+router.post('/extract', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { imageBase64, mediaType, originalAnalysisId, predictedScore, postContent } =
       extractMetricsSchema.parse(req.body);
@@ -80,7 +80,7 @@ router.post('/extract', async (req, res, next) => {
 });
 
 // GET /api/performance/history - Get performance tracking history
-router.get('/history', async (_req, res, next) => {
+router.get('/history', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     if (!isDbAvailable || !db) {
       return res.json({
@@ -105,7 +105,7 @@ router.get('/history', async (_req, res, next) => {
 });
 
 // GET /api/performance/trends - Get performance trends
-router.get('/trends', async (_req, res, next) => {
+router.get('/trends', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     if (!isDbAvailable || !db) {
       return res.json({
@@ -162,9 +162,9 @@ router.get('/trends', async (_req, res, next) => {
 });
 
 // PUT /api/performance/:id - Update metrics manually
-router.put('/:id', async (req, res, next) => {
+router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const updates = updateMetricsSchema.parse(req.body);
 
     if (!isDbAvailable || !db) {
@@ -192,9 +192,9 @@ router.put('/:id', async (req, res, next) => {
 });
 
 // DELETE /api/performance/:id - Delete performance record
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     if (!isDbAvailable || !db) {
       return res.status(404).json({

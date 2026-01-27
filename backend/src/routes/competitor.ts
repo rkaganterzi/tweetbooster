@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { eq, desc } from 'drizzle-orm';
@@ -16,7 +16,7 @@ const analyzeCompetitorSchema = z.object({
 });
 
 // POST /api/competitor/analyze - Analyze competitor content
-router.post('/analyze', async (req, res, next) => {
+router.post('/analyze', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { content, sourceUrl, notes } = analyzeCompetitorSchema.parse(req.body);
 
@@ -57,7 +57,7 @@ router.post('/analyze', async (req, res, next) => {
 });
 
 // GET /api/competitor/history - Get competitor analysis history
-router.get('/history', async (_req, res, next) => {
+router.get('/history', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     if (!isDbAvailable || !db) {
       return res.json({
@@ -93,9 +93,9 @@ router.get('/history', async (_req, res, next) => {
 });
 
 // GET /api/competitor/:id - Get single competitor analysis
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     if (!isDbAvailable || !db) {
       return res.status(404).json({
@@ -134,9 +134,9 @@ router.get('/:id', async (req, res, next) => {
 });
 
 // DELETE /api/competitor/:id - Delete competitor analysis
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     if (!isDbAvailable || !db) {
       return res.status(404).json({

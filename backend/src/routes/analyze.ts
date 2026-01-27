@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { db, schema, isDbAvailable } from '../db/index.js';
@@ -13,7 +13,7 @@ const analyzeRequestSchema = z.object({
   saveHistory: z.boolean().optional().default(true),
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { content, hasMedia, saveHistory } = analyzeRequestSchema.parse(req.body);
 
@@ -44,7 +44,7 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.get('/history', async (_req, res, next) => {
+router.get('/history', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     if (!isDbAvailable || !db) {
       return res.json({

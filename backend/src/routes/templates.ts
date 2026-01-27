@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
@@ -121,7 +121,7 @@ const DEFAULT_TEMPLATES: Omit<PostTemplate, 'id'>[] = [
   },
 ];
 
-router.get('/', async (_req, res, next) => {
+router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const database = requireDb();
     const templates = await database.query.templates.findMany({
@@ -150,14 +150,14 @@ router.get('/', async (_req, res, next) => {
   }
 });
 
-router.get('/defaults', (_req, res) => {
+router.get('/defaults', (_req: Request, res: Response) => {
   res.json({
     success: true,
     data: DEFAULT_TEMPLATES.map((t, i) => ({ ...t, id: `default-${i}` })),
   });
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const database = requireDb();
     const data = createTemplateSchema.parse(req.body);
@@ -181,9 +181,9 @@ router.post('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     if (id.startsWith('default-')) {
       const index = parseInt(id.replace('default-', ''), 10);
@@ -227,10 +227,10 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const database = requireDb();
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     if (id.startsWith('default-')) {
       throw createError('Cannot delete default templates', 400, 'INVALID_OPERATION');
