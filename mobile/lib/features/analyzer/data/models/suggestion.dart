@@ -25,6 +25,7 @@ class Suggestion {
   final SuggestionPriority priority;
   final double? impactScore;
   final String? example;
+  final String? improvedContent; // AI-generated improved version
 
   Suggestion({
     required this.id,
@@ -34,10 +35,11 @@ class Suggestion {
     this.priority = SuggestionPriority.medium,
     this.impactScore,
     this.example,
+    this.improvedContent,
   });
 
   factory Suggestion.fromJson(Map<String, dynamic> json) {
-    // Backend returns: type, priority, message, action, potentialScoreIncrease
+    // Backend returns: type, priority, message, action, potentialScoreIncrease, improvedContent
     final typeStr = json['type'] as String? ?? '';
     final message = json['message'] as String? ?? '';
     final action = json['action'] as String? ?? '';
@@ -51,6 +53,7 @@ class Suggestion {
       impactScore: (json['impactScore'] as num?)?.toDouble() ??
                    (json['potentialScoreIncrease'] as num?)?.toDouble(),
       example: json['example'] as String?,
+      improvedContent: json['improvedContent'] as String?,
     );
   }
 
@@ -95,8 +98,12 @@ class Suggestion {
       'priority': priority.name,
       'impactScore': impactScore,
       'example': example,
+      'improvedContent': improvedContent,
     };
   }
+
+  /// Check if this suggestion has an AI-generated improvement
+  bool get hasImprovement => improvedContent != null && improvedContent!.isNotEmpty;
 
   static SuggestionType _parseType(String? type) {
     switch (type) {

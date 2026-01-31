@@ -38,17 +38,24 @@ class TimingRecommendation {
     return '$hourStr:00';
   }
 
+  /// Day name based on JS weekday convention (Sunday=0, Saturday=6)
   String get dayName {
     const days = [
-      'Pazartesi',
-      'Salı',
-      'Çarşamba',
-      'Perşembe',
-      'Cuma',
-      'Cumartesi',
-      'Pazar',
+      'Pazar',     // 0 - Sunday
+      'Pazartesi', // 1 - Monday
+      'Salı',      // 2 - Tuesday
+      'Çarşamba',  // 3 - Wednesday
+      'Perşembe',  // 4 - Thursday
+      'Cuma',      // 5 - Friday
+      'Cumartesi', // 6 - Saturday
     ];
+    if (dayOfWeek < 0 || dayOfWeek > 6) return 'Bilinmiyor';
     return days[dayOfWeek];
+  }
+
+  /// Convert Dart weekday (Mon=1, Sun=7) to JS weekday (Sun=0, Sat=6)
+  static int dartToJsWeekday(int dartWeekday) {
+    return dartWeekday % 7;
   }
 }
 

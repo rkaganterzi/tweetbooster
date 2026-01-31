@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/config/api_config.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/router/app_router.dart';
@@ -16,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
+  String _statusText = 'Yükleniyor...';
 
   @override
   void initState() {
@@ -41,12 +44,50 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to home after splash animation
-    Future.delayed(const Duration(milliseconds: 2000), () {
+    // Wake up backend and navigate when ready
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    final startTime = DateTime.now();
+    const minSplashDuration = Duration(milliseconds: 2000);
+
+    // Wake up backend in background
+    await _wakeUpBackend();
+
+    // Ensure minimum splash duration for smooth UX
+    final elapsed = DateTime.now().difference(startTime);
+    if (elapsed < minSplashDuration) {
+      await Future.delayed(minSplashDuration - elapsed);
+    }
+
+    if (mounted) {
+      context.go(AppRoutes.home);
+    }
+  }
+
+  Future<void> _wakeUpBackend() async {
+    try {
       if (mounted) {
-        context.go(AppRoutes.home);
+        setState(() => _statusText = 'Sunucuya bağlanılıyor...');
       }
-    });
+
+      final dio = Dio(BaseOptions(
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+      ));
+
+      await dio.get('${ApiConfig.baseUrl}/health');
+
+      if (mounted) {
+        setState(() => _statusText = 'Hazır!');
+      }
+    } catch (e) {
+      // Backend might be slow to wake up, but we continue anyway
+      if (mounted) {
+        setState(() => _statusText = 'Devam ediliyor...');
+      }
+    }
   }
 
   @override
@@ -118,6 +159,14 @@ class _SplashScreenState extends State<SplashScreen>
                         valueColor: AlwaysStoppedAnimation<Color>(
                           AppColors.primary,
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Status text
+                    Text(
+                      _statusText,
+                      style: AppTypography.caption.copyWith(
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],

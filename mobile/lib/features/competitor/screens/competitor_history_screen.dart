@@ -158,7 +158,7 @@ class _CompetitorHistoryScreenState
                 _DetailRow('Beğeni Potansiyeli', '${analysis.engagementScores.likeability.toStringAsFixed(0)}'),
                 _DetailRow('RT Potansiyeli', '${analysis.engagementScores.retweetability.toStringAsFixed(0)}'),
                 _DetailRow('Yanıt Potansiyeli', '${analysis.engagementScores.replyability.toStringAsFixed(0)}'),
-                _DetailRow('Kaydetme Potansiyeli', '${analysis.engagementScores.bookmarkability.toStringAsFixed(0)}'),
+                _DetailRow('Alıntı Potansiyeli', '${analysis.engagementScores.quoteability.toStringAsFixed(0)}'),
                 if (competitorAnalysis.notes != null) ...[
                   AppSpacing.verticalGapMd,
                   Text(

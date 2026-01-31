@@ -29,9 +29,13 @@ class PostAnalysis {
     final metricsData = json['contentMetrics'] ?? json['metrics'] ?? {};
     final signalsData = json['algorithmSignals'] ?? json['signals'] ?? {};
 
+    // Backend returns 0-1, UI expects 0-100
+    final rawScore = (json['overallScore'] as num?)?.toDouble() ?? 0;
+    final normalizedScore = rawScore <= 1 ? rawScore * 100 : rawScore;
+
     return PostAnalysis(
       content: json['content'] as String? ?? '',
-      overallScore: (json['overallScore'] as num?)?.toDouble() ?? 0,
+      overallScore: normalizedScore,
       engagementScores: EngagementScores.fromJson(
         json['engagementScores'] as Map<String, dynamic>? ?? {},
       ),

@@ -4,10 +4,10 @@ class ApiConfig {
   // Base URL for the API (Render deployment)
   static const String baseUrl = 'https://tweetbooster-api.onrender.com';
 
-  // Timeouts
-  static const Duration connectTimeout = Duration(seconds: 30);
-  static const Duration receiveTimeout = Duration(seconds: 30);
-  static const Duration sendTimeout = Duration(seconds: 30);
+  // Timeouts (increased for Render.com cold start)
+  static const Duration connectTimeout = Duration(seconds: 60);
+  static const Duration receiveTimeout = Duration(seconds: 60);
+  static const Duration sendTimeout = Duration(seconds: 60);
 
   // Endpoints
   static const String analyzeEndpoint = '/api/analyze';

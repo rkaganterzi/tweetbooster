@@ -194,3 +194,10 @@ class ApiException implements Exception {
   @override
   String toString() => message;
 }
+
+/// Extension to dispose API service
+extension ApiServiceDispose on ApiService {
+  void dispose() {
+    _dio.close();
+  }
+}

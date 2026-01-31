@@ -14,12 +14,21 @@ class GeneratorRepository {
       data: request.toJson(),
     );
 
-    final responseData = response.data as Map<String, dynamic>;
-    final data = responseData['data'] as Map<String, dynamic>;
+    final responseData = response.data;
+    if (responseData is! Map<String, dynamic>) {
+      throw ApiException(message: 'Geçersiz API yanıtı');
+    }
+
+    final data = responseData['data'];
+    if (data is! Map<String, dynamic>) {
+      throw ApiException(message: 'Post oluşturulamadı');
+    }
+
     data['style'] = request.style.value; // Add style as string from request
     return GeneratedPost.fromJson(data);
   }
 
+  // Note: This endpoint doesn't exist in backend - kept for future use
   Future<List<GeneratedPost>> generateMultiple(
     GenerationRequest request, {
     int count = 3,
@@ -32,9 +41,19 @@ class GeneratorRepository {
       },
     );
 
-    final list = response.data as List<dynamic>;
+    final responseData = response.data;
+    if (responseData is! Map<String, dynamic>) {
+      return [];
+    }
+
+    final list = responseData['data'];
+    if (list is! List<dynamic>) {
+      return [];
+    }
+
     return list
-        .map((e) => GeneratedPost.fromJson(e as Map<String, dynamic>))
+        .whereType<Map<String, dynamic>>()
+        .map((e) => GeneratedPost.fromJson(e))
         .toList();
   }
 }

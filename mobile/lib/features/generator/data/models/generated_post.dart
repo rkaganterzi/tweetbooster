@@ -18,10 +18,14 @@ class GeneratedPost {
   });
 
   factory GeneratedPost.fromJson(Map<String, dynamic> json) {
+    // Backend returns 0-1, UI expects 0-100
+    final rawScore = (json['score'] as num?)?.toDouble() ?? 0;
+    final normalizedScore = rawScore <= 1 ? rawScore * 100 : rawScore;
+
     return GeneratedPost(
       id: json['id'] as String? ?? '',
       content: json['content'] as String? ?? '',
-      score: (json['score'] as num?)?.toDouble() ?? 0,
+      score: normalizedScore,
       style: json['style'] as String? ?? '',
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)

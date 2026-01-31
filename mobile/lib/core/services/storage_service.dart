@@ -9,6 +9,9 @@ class StorageService {
   static const String _historyBoxName = 'analysis_history';
   static const String _draftsBoxName = 'drafts';
 
+  /// Maximum number of history items to keep
+  static const int _maxHistoryItems = 50;
+
   static StorageService? _instance;
   static StorageService get instance {
     if (_instance == null) {
@@ -80,9 +83,9 @@ class StorageService {
     final key = DateTime.now().millisecondsSinceEpoch.toString();
     await _historyBox!.put(key, jsonEncode(analysis));
 
-    // Keep only last 50 items
-    if (_historyBox!.length > 50) {
-      final keysToDelete = _historyBox!.keys.take(_historyBox!.length - 50);
+    // Keep only last N items
+    if (_historyBox!.length > _maxHistoryItems) {
+      final keysToDelete = _historyBox!.keys.take(_historyBox!.length - _maxHistoryItems);
       for (final key in keysToDelete) {
         await _historyBox!.delete(key);
       }
@@ -149,5 +152,12 @@ class StorageService {
     await _prefs?.clear();
     await _historyBox?.clear();
     await _draftsBox?.clear();
+  }
+
+  /// Dispose and close all resources
+  Future<void> dispose() async {
+    await _historyBox?.close();
+    await _draftsBox?.close();
+    _instance = null;
   }
 }

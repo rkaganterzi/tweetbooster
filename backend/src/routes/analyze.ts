@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { randomUUID } from 'node:crypto';
 import { db, schema, isDbAvailable } from '../db/index.js';
 import { analyzePost } from '../services/analyzer/index.js';
+import { generateImprovedSuggestions } from '../services/suggestion-improver.js';
 import type { PostAnalysis } from '@postmaker/shared';
 
 const router = Router();
@@ -11,15 +12,25 @@ const analyzeRequestSchema = z.object({
   content: z.string().min(1, 'Content is required').max(10000, 'Content too long'),
   hasMedia: z.boolean().optional().default(false),
   saveHistory: z.boolean().optional().default(true),
+  generateImprovements: z.boolean().optional().default(false),
 });
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { content, hasMedia, saveHistory } = analyzeRequestSchema.parse(req.body);
+    const { content, hasMedia, saveHistory, generateImprovements } = analyzeRequestSchema.parse(req.body);
 
     // Convert hasMedia boolean to mediaUrls array format expected by analyzer
     const mediaUrls = hasMedia ? ['media'] : undefined;
     const analysis: PostAnalysis = analyzePost(content, mediaUrls);
+
+    // Generate improved content for suggestions if requested
+    if (generateImprovements && analysis.suggestions.length > 0) {
+      const improvedSuggestions = await generateImprovedSuggestions(
+        content,
+        analysis.suggestions
+      );
+      analysis.suggestions = improvedSuggestions;
+    }
 
     // Only save to history if database is available and saveHistory is true
     if (saveHistory && isDbAvailable && db) {

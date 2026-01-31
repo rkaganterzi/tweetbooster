@@ -35,5 +35,5 @@ class AdConfig {
   }
 
   // Interstitial frequency (show every N actions)
-  static const int interstitialFrequency = 3;
+  static const int interstitialFrequency = 2;
 }

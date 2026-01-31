@@ -126,6 +126,7 @@ class GeneratorController extends StateNotifier<GeneratorState> {
       state = state.copyWith(
         isLoading: false,
         error: e.toString(),
+        clearGeneratedPost: true, // Clear old post on error
       );
     }
   }

@@ -46,7 +46,10 @@ abstract class AppLocalizations {
   String get likeability;
   String get replyability;
   String get retweetability;
-  String get bookmarkability;
+  String get quoteability;
+  String get shareability;
+  String get dwellPotential;
+  String get followPotential;
   String get postPlaceholder;
   String characterCount(int count);
   String get settings;
@@ -150,7 +153,13 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get retweetability => 'Retweet Potansiyeli';
   @override
-  String get bookmarkability => 'Kaydetme Potansiyeli';
+  String get quoteability => 'Alıntı Potansiyeli';
+  @override
+  String get shareability => 'Paylaşım Potansiyeli';
+  @override
+  String get dwellPotential => 'Okuma Süresi';
+  @override
+  String get followPotential => 'Takip Potansiyeli';
   @override
   String get postPlaceholder => 'Postunuzu buraya yazın...';
   @override
@@ -268,7 +277,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get retweetability => 'Retweetability';
   @override
-  String get bookmarkability => 'Bookmarkability';
+  String get quoteability => 'Quoteability';
+  @override
+  String get shareability => 'Shareability';
+  @override
+  String get dwellPotential => 'Dwell Time';
+  @override
+  String get followPotential => 'Follow Potential';
   @override
   String get postPlaceholder => 'Write your post here...';
   @override

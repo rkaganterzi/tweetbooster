@@ -19,11 +19,14 @@ class TimingRepository {
 
       // Parse optimal hours
       final optimalHours = (timingData['optimalHours'] as List<dynamic>?) ?? [];
+      // Convert Dart weekday to JS weekday format (Sun=0, Sat=6)
+      final currentDayJs = TimingRecommendation.dartToJsWeekday(DateTime.now().weekday);
+
       final topTimes = optimalHours.take(5).map((h) {
         final hour = h as Map<String, dynamic>;
         return TimingRecommendation(
           hour: hour['hour'] as int? ?? 0,
-          dayOfWeek: DateTime.now().weekday - 1,
+          dayOfWeek: currentDayJs,
           score: (hour['score'] as num?)?.toDouble() ?? 0,
           label: hour['audienceActivity'] as String? ?? '',
           description: 'Engagement: ${hour['engagementMultiplier']}x',
@@ -81,7 +84,8 @@ class TimingRepository {
   TimingAnalysis _getMockTimingAnalysis() {
     final now = DateTime.now();
     final currentHour = now.hour;
-    final currentDay = now.weekday - 1;
+    // Convert Dart weekday to JS weekday format (Sun=0, Sat=6)
+    final currentDay = TimingRecommendation.dartToJsWeekday(now.weekday);
 
     // Calculate mock score based on current time
     double score;
@@ -116,7 +120,7 @@ class TimingRepository {
       recommendation: recommendation,
       bestTime: TimingRecommendation(
         hour: 19,
-        dayOfWeek: 1,
+        dayOfWeek: 2, // Tuesday in JS format (Sun=0)
         score: 95,
         label: 'En İyi Zaman',
         description: 'Salı akşamları en yüksek etkileşim',
@@ -126,39 +130,40 @@ class TimingRepository {
     );
   }
 
+  /// Mock best times using JS weekday format (Sun=0, Sat=6)
   List<TimingRecommendation> _getMockBestTimes() {
     return [
       TimingRecommendation(
         hour: 19,
-        dayOfWeek: 1,
+        dayOfWeek: 2, // Tuesday
         score: 95,
         label: '1. En İyi',
         description: 'Salı 19:00 - En yüksek etkileşim',
       ),
       TimingRecommendation(
         hour: 12,
-        dayOfWeek: 3,
+        dayOfWeek: 4, // Thursday
         score: 92,
         label: '2. En İyi',
         description: 'Perşembe 12:00 - Öğle molası',
       ),
       TimingRecommendation(
         hour: 20,
-        dayOfWeek: 0,
+        dayOfWeek: 1, // Monday
         score: 90,
         label: '3. En İyi',
         description: 'Pazartesi 20:00 - Akşam trafiği',
       ),
       TimingRecommendation(
         hour: 18,
-        dayOfWeek: 4,
+        dayOfWeek: 5, // Friday
         score: 88,
         label: '4. En İyi',
         description: 'Cuma 18:00 - Hafta sonu başlangıcı',
       ),
       TimingRecommendation(
         hour: 10,
-        dayOfWeek: 2,
+        dayOfWeek: 3, // Wednesday
         score: 85,
         label: '5. En İyi',
         description: 'Çarşamba 10:00 - Sabah trafiği',

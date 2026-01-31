@@ -48,8 +48,14 @@ class EngagementChart extends StatelessWidget {
         return l10n.replyability;
       case 'retweetability':
         return l10n.retweetability;
-      case 'bookmarkability':
-        return l10n.bookmarkability;
+      case 'quoteability':
+        return l10n.quoteability;
+      case 'shareability':
+        return l10n.shareability;
+      case 'dwellPotential':
+        return l10n.dwellPotential;
+      case 'followPotential':
+        return l10n.followPotential;
       default:
         return key;
     }

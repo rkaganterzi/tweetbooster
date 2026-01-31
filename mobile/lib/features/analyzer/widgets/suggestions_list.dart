@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_typography.dart';
@@ -103,6 +104,17 @@ class _SuggestionItem extends StatefulWidget {
 class _SuggestionItemState extends State<_SuggestionItem> {
   bool _isExpanded = false;
 
+  void _copyToClipboard(BuildContext context, String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.l10n.copiedToClipboard),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -172,6 +184,77 @@ class _SuggestionItemState extends State<_SuggestionItem> {
                       color: AppColors.textSecondary,
                     ),
                   ),
+                  // AI-generated improved content
+                  if (widget.suggestion.hasImprovement) ...[
+                    AppSpacing.verticalGapMd,
+                    Container(
+                      width: double.infinity,
+                      padding: AppSpacing.paddingMd,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primary.withOpacity(0.1),
+                            AppColors.primary.withOpacity(0.05),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: AppSpacing.borderRadiusMd,
+                        border: Border.all(
+                          color: AppColors.primary.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.auto_awesome,
+                                size: 16,
+                                color: AppColors.primary,
+                              ),
+                              AppSpacing.horizontalGapXs,
+                              Text(
+                                'Düzenlenmiş Hali',
+                                style: AppTypography.caption.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              const Spacer(),
+                              InkWell(
+                                onTap: () => _copyToClipboard(context, widget.suggestion.improvedContent!),
+                                borderRadius: BorderRadius.circular(8),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Icon(
+                                    Icons.copy,
+                                    size: 18,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          AppSpacing.verticalGapSm,
+                          Text(
+                            widget.suggestion.improvedContent!,
+                            style: AppTypography.body.copyWith(
+                              height: 1.5,
+                            ),
+                          ),
+                          AppSpacing.verticalGapSm,
+                          Text(
+                            '${widget.suggestion.improvedContent!.length} karakter',
+                            style: AppTypography.caption.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   if (widget.suggestion.example != null) ...[
                     AppSpacing.verticalGapMd,
                     Container(

@@ -90,8 +90,8 @@ class CompetitorComparison {
           competitor.analysis.engagementScores.retweetability,
       'replies': myPost!.engagementScores.replyability -
           competitor.analysis.engagementScores.replyability,
-      'bookmarks': myPost!.engagementScores.bookmarkability -
-          competitor.analysis.engagementScores.bookmarkability,
+      'quotes': myPost!.engagementScores.quoteability -
+          competitor.analysis.engagementScores.quoteability,
     };
   }
 }
